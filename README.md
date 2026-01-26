@@ -170,7 +170,7 @@ If you use this code in your research, please cite:
 ```bibtex
 @software{espi_pseudonoisy_2025,
   title={ESPI-PseudoNoisy: Physics-Aware Synthetic Noise Generation for ESPI Data Augmentation},
-  author={[Your Name]},
+  author={Spyridakis Georgios},
   year={2025},
   url={https://github.com/[your-username]/ESPI-PseudoNoisy}
 }
