@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "ESPI-PseudoNoisy: Physics-Aware Synthetic Noise Generation"
+version: 1.0.0
+date-released: 2026-01-01
+authors:
+  - family-names: "Spyropoulos"
+    given-names: "Georgios"
+    orcid: "https://orcid.org/0009-0004-0866-0107"
+    affiliation: "Hellenic Mediterranean University, Department of Music Technology and Acoustics"
+abstract: >-
+  Physics-aware synthetic noise generator for ESPI (Electronic Speckle 
+  Pattern Interferometry) images. Implements realistic noise models including 
+  multiplicative speckle, Poisson shot noise, and Gaussian floor for data 
+  augmentation in denoising and classification tasks. Uses Burr Type XII 
+  distribution calibrated from real ESPI measurements.
+keywords:
+  - ESPI
+  - synthetic noise
+  - data augmentation
+  - speckle noise
+  - interferometry
+  - image processing
+  - deep learning
+  - denoising
+license: MIT
+repository-code: "https://github.com/GeorgeSpy/ESPI-pseydonoisy-generator"
