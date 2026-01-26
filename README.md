@@ -177,7 +177,7 @@ If you use this code in your research, please cite:
 ```
 
 ## 📄 License
-
+MIT License - see LICENSE for details.
 This project is part of academic research. Please cite appropriately if used in your work.
 
 ---
