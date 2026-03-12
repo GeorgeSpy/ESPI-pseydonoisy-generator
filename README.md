@@ -1,41 +1,63 @@
-# ESPI-PseudoNoisy: Physics-Aware Synthetic Noise Generation
+# ESPI-PseudoNoisy: Physically Calibrated Pseudo-Noisy Generation for ESPI
 
-A comprehensive toolkit for generating realistic synthetic noise in ESPI (Electronic Speckle Pattern Interferometry) images for data augmentation and training purposes.
+This repository contains the physically calibrated pseudo-noisy generator used in the thesis to support ESPI denoising experiments under data scarcity. Its role in the broader workflow is to generate synthetic supervision that is closer to the real single-shot acquisition regime, helping reduce the synthetic-real gap during denoising training.
 
-## 🎯 Overview
+The repository should be understood as the **public pseudo-noisy generation component** of the thesis, not as a standalone end-to-end solution for denoising or classification.
 
-This repository contains physics-aware synthetic noise generators that create realistic noisy ESPI images from clean reference images. The generated pseudo-noisy data is essential for:
+## Thesis positioning
 
-- **Data Augmentation:** Creating balanced training datasets (80/20 real:pseudo pairs)
-- **Fine-tuning:** Training denoising models with synthetic data
-- **Performance Enhancement:** Critical for achieving 96.4% accuracy in hybrid classification
+Within the full thesis workflow, this repository supports the denoising stage by providing a calibrated synthetic-noise model when matched real training pairs are limited or incomplete.
 
-## 🔬 Physics-Aware Noise Models
+Its purpose is to:
 
-### Noise Cascade
-1. **Multiplicative Speckle (Gamma):** Primary ESPI speckle noise
-2. **Poisson Shot Noise:** Photon counting statistics
-3. **Gaussian Floor:** Electronic noise and quantization
+- generate pseudo-noisy ESPI samples from cleaner reference images,
+- support denoising model development under limited real supervision,
+- study how synthetic supervision behaves relative to real-aligned supervision,
+- document the calibration and development history behind the pseudo-noisy generation process.
 
-### Advanced Features
-- **Frequency-aware motion blur:** Frequency and amplitude → blur length
-- **Material-aware profiles:** Wood and carbon fiber specific parameters
-- **Spatially-varying speckle:** ROI and distance-based variations
-- **Temporal correlation:** AR(1) smoothing for sequence generation
-- **Adaptive calibration:** Self-calibration from real single-shot vs averaged pairs
+It should **not** be interpreted as a general-purpose augmentation toolkit, and it should **not** be read as implying that this repository alone delivers the final downstream classification performance reported in the thesis.
 
-## 🚀 Quick Start
+## Core modeling idea
+
+The generator is built around a physically motivated cascade designed to approximate ESPI acquisition noise:
+
+1. **Multiplicative speckle (Gamma)** as the primary coherent-noise component
+2. **Poisson shot noise** to reflect photon-counting effects
+3. **Gaussian floor noise** to approximate electronic noise and quantization
+
+On top of this baseline cascade, the repository includes calibration and realism-oriented mechanisms such as:
+
+- calibration from **real single-shot vs averaged reference pairs**,
+- specimen-aware and material-aware parameter defaults,
+- frequency- and amplitude-dependent motion blur,
+- optional spatial variation and temporal correlation,
+- matched pair generation for denoising experiments.
+
+## Main scripts
+
+- `make_pseudo_noisy_plus.py`
+  Main calibrated generator with the full thesis-oriented noise cascade and calibration options.
+
+- `make_pseudo_noisy_matched.py`
+  Utility for generating matched clean/noisy pairs for denoising workflows.
+
+- `generate_pseudo_noisy.py`
+  Lightweight batch-style wrapper for pseudo-noisy generation.
+
+- `make_pseudo_noisy_v3.py`
+  Earlier generator variant retained for historical development context.
+
+## Quick start
 
 ### Installation
+
 ```bash
-pip install numpy pillow
-# Optional for enhanced features:
-pip install scipy scikit-image opencv-python pandas
+pip install -r requirements.txt
 ```
 
-### Basic Usage
+### Example usage
+
 ```bash
-# Generate pseudo-noisy images
 python make_pseudo_noisy_plus.py \
     --clean-dir /path/to/clean/images \
     --out-dir /path/to/output \
@@ -44,142 +66,50 @@ python make_pseudo_noisy_plus.py \
     --amplitude 0.5
 ```
 
-### Advanced Usage
-```bash
-# Generate temporal sequences with correlation
-python make_pseudo_noisy_plus.py \
-    --clean-dir /path/to/clean \
-    --out-dir /path/to/output \
-    --material carbon_fiber \
-    --frequency 335 \
-    --amplitude 0.3 \
-    --n-frames 10 \
-    --temporal-correlation 0.85
-```
+## Thesis-aligned interpretation
 
-## 📊 Key Scripts
+The thesis conclusion is **regime-dependent**, not generator-only:
 
-### `make_pseudo_noisy_plus.py` - Main Generator
-- **Features:** Full physics-aware noise cascade
-- **Calibration:** Adaptive parameter estimation
-- **Materials:** Wood and carbon fiber profiles
-- **Output:** 8-bit PNG or 16-bit TIFF
+- physically calibrated pseudo-noisy supervision is useful when real denoising supervision is scarce,
+- reducing the synthetic-real gap matters more than simply increasing synthetic quantity,
+- downstream benefit depends on how closely the generated supervision matches the real acquisition regime,
+- the final thesis conclusions about denoising and downstream classification must be interpreted together with the separate denoising and classification repositories.
 
-### `make_pseudo_noisy_v3.py` - Alternative Version
-- **Features:** Simplified noise model
-- **Use case:** Quick generation for testing
-- **Performance:** Faster processing
+## Repository contents
 
-### `generate_pseudo_noisy.py` - Batch Generator
-- **Features:** Batch processing capabilities
-- **Integration:** Works with pipeline automation
-- **Scaling:** Handles large datasets
+This repository currently contains the public generator scripts and thesis-supporting notes in the repository root:
 
-### `make_pseudo_noisy_matched.py` - Matched Pairs
-- **Features:** Creates matched clean/noisy pairs
-- **Training:** Optimized for fine-tuning workflows
-- **Quality:** Ensures consistent pairing
+- `README.md`
+- `RESEARCH_SUMMARY.md`
+- `COMPREHENSIVE_ESPI_PSEUDONOISY_DATA.md`
+- `make_pseudo_noisy_plus.py`
+- `make_pseudo_noisy_matched.py`
+- `generate_pseudo_noisy.py`
+- `make_pseudo_noisy_v3.py`
+- `requirements.txt`
+- `CITATION.cff`
 
-## 🔧 Parameters
+## Related repositories
 
-### Material Profiles
-- **Wood:** Lower frequency, higher amplitude variations
-- **Carbon Fiber:** Higher frequency, lower amplitude variations
+The thesis codebase is split across three public code components:
 
-### Noise Parameters
-- **Speckle (k, peak, sigma):** Gamma distribution parameters
-- **Poisson (lambda):** Shot noise intensity
-- **Gaussian (mu, sigma):** Electronic noise floor
+- **Pseudo-noisy generation (this repository)** (`https://github.com/GeorgeSpy/ESPI-pseydonoisy-generator`)
+- **DnCNN-ECA denoising** (`https://github.com/GeorgeSpy/ESPI-DnCNN-ECA`)
+- **Classification and evaluation** (`https://github.com/GeorgeSpy/espi-classification-models_2`)
 
-### Motion Blur
-- **Frequency-dependent:** Higher frequencies → more blur
-- **Amplitude-dependent:** Larger amplitudes → more blur
-- **Material-specific:** Different blur characteristics per material
+## Citation
 
-## 📈 Performance Metrics
-
-The generator includes comprehensive metrics:
-- **PSNR:** Peak Signal-to-Noise Ratio
-- **SSIM:** Structural Similarity Index
-- **MPI:** Modal Preservation Index (ESPI-specific)
-- **Phase Coherence:** Phase relationship preservation
-
-## 🎓 Research Applications
-
-### Data Augmentation
-- **Balanced Training:** 80/20 real:pseudo pairs
-- **Class Imbalance:** Generate samples for minority classes
-- **Domain Adaptation:** Adapt to different experimental conditions
-
-### Model Training
-- **Fine-tuning:** Pre-train on synthetic data
-- **Transfer Learning:** Cross-domain adaptation
-- **Robustness:** Train on diverse noise conditions
-
-### Validation
-- **Ablation Studies:** Test different noise components
-- **Parameter Sensitivity:** Analyze noise parameter effects
-- **Generalization:** Cross-material validation
-
-## 📁 Repository Structure
-
-```
-ESPI-PseudoNoisy/
-├── README.md                          # This file
-├── make_pseudo_noisy_plus.py          # Main generator
-├── make_pseudo_noisy_v3.py            # Alternative version
-├── generate_pseudo_noisy.py           # Batch generator
-├── make_pseudo_noisy_matched.py        # Matched pairs
-├── requirements.txt                    # Dependencies
-├── examples/                          # Example configurations
-│   ├── wood_profile.json              # Wood material profile
-│   ├── carbon_profile.json            # Carbon fiber profile
-│   └── sample_outputs/                # Example outputs
-└── docs/                              # Documentation
-    ├── noise_models.md                # Detailed noise models
-    ├── calibration.md                 # Calibration procedures
-    └── examples.md                    # Usage examples
-```
-
-## 🔬 Scientific Background
-
-### ESPI Noise Characteristics
-- **Speckle:** Interference pattern from coherent illumination
-- **Shot Noise:** Quantum nature of light detection
-- **Electronic Noise:** Amplifier and ADC noise
-- **Motion Blur:** Vibration-induced temporal averaging
-
-### Calibration Methodology
-1. **Real Data Analysis:** Single-shot vs averaged pairs
-2. **Parameter Estimation:** Maximum likelihood fitting
-3. **Validation:** Cross-correlation with real noise
-4. **Adaptation:** Material and frequency-specific tuning
-
-## 📊 Results Integration
-
-This toolkit is essential for the ESPI-DnCNN pipeline:
-- **Training Data:** Generates synthetic pairs for fine-tuning
-- **Performance:** Critical for 96.4% hybrid classification accuracy
-- **Validation:** Enables robust cross-validation strategies
-- **Reproducibility:** Ensures consistent synthetic data generation
-
-## 🤝 Citation
-
-If you use this code in your research, please cite:
+If you use this repository, please cite the software metadata in `CITATION.cff`. A repository-level BibTeX example is:
 
 ```bibtex
-@software{espi_pseudonoisy_2025,
-  title={ESPI-PseudoNoisy: Physics-Aware Synthetic Noise Generation for ESPI Data Augmentation},
-  author={Spyridakis Georgios},
-  year={2025},
-  url={https://github.com/[your-username]/ESPI-PseudoNoisy}
+@software{spyridakis2025espi_pseudonoisy,
+  title   = {ESPI-PseudoNoisy: Physically Calibrated Pseudo-Noisy Generation for ESPI},
+  author  = {Spyridakis, Georgios},
+  year    = {2025},
+  url     = {https://github.com/GeorgeSpy/ESPI-pseydonoisy-generator}
 }
 ```
 
-## 📄 License
-MIT License - see LICENSE for details.
-This project is part of academic research. Please cite appropriately if used in your work.
+## License
 
----
-
-*For detailed usage and examples, see the `docs/` directory*
+MIT License. See `LICENSE` for details.

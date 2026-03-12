@@ -1,164 +1,104 @@
-# Research Summary & Thesis Notes
+# Research Summary and Thesis Notes
 
-This document summarizes the development journey of the ESPI pseudo-noise generation tool, detailing the challenges, ablation studies, and the final "pairfix" methodology that led to successful denoising results.
-
----
-
-## 1. Starting Point
-
-*   **Objective**: Create **pseudo-noisy** images to train a **DnCNN** model on ESPI data.
-*   **Initial Script**: Used `make_pseudo_noisy_plus.py` / `make_pseudo_noisy_plus_minpatch.py`.
-*   **Data Structure**:
-    *   **Clean / Averaged**: `/data/wood_Averaged/w01, w02, w03` (and specific folders like `W03_ESPI_90db-Averaged`)
-    *   **Real Single-shot**: `/data/wood_real_A/W01...`, `..._B/W02...`, `..._C/W03...`
-    *   **ROI Masks**: `/roi/roi_mask.png`, `roi_mask_W02.png`, etc.
-*   **Goal**: Generate **realistically noisy** data for training/validation and document the process for the thesis.
+This document summarizes the internal development path of the ESPI pseudo-noisy generation pipeline. It is kept as a **development-history / thesis-notes** document, not as a stand-alone statement of the final thesis conclusion.
 
 ---
 
-## 2. Phase 1: Pseudo-noisy generation for w01/w02/w03
+## 1. Starting point
 
-*   Ran the script on clean averaged inputs:
-    *   Input: `/data/wood_Averaged/...`
-    *   Output: `/project/pseudo_noisy/roi/w01|w02|w03`
-    *   Applied per-board ROI masks.
-*   Generated ~**699 pseudo-noisy** images (243 + 255 + 201).
-*   **Format Handling**: Processed `.tif` (pseudo-noisy) vs `.png` (averaged) differences in the manifests.
+The initial objective was to create pseudo-noisy ESPI images that could support DnCNN denoising experiments when large sets of matched real noisy/clean pairs were not yet available.
 
----
+The early working scripts included:
 
-## 3. Manifests & LOBO Strategy
+- `make_pseudo_noisy_plus.py`
+- related experimental generator variants used during calibration and ablation phases
 
-*   Created manifests for training/validation using **LOBO (Leave-One-Board-Out)**:
-    *   **Train**: w01 + w02
-    *   **Val**: w03
-*   Resolved filename mismatches (e.g., `_full.tif` vs `.png`) by implementing **suffix stripping** logic.
+The broader research goal was to generate synthetic supervision realistic enough to be useful for denoising development while documenting the limitations of purely synthetic training.
 
 ---
 
-## 4. First DnCNN Training (Baseline)
+## 2. Early pseudo-noisy generation phase
 
-*   Conducted a **pilot training** (~3 epochs) to validate the pipeline.
-*   **Validation Results (w03)**:
-    *   Training PSNR: ~**14–15 dB**
-    *   **Inference on Real Averaged Data**: Gain was negligible (**+0.0x dB**) or worse.
-*   **Conclusion**: The model failed to improve quality on real data → indicating a significant **domain gap**.
+An initial generation phase was performed on averaged ESPI inputs, producing pseudo-noisy samples for board-specific splits and ROI-constrained experiments.
 
----
+At this stage, the work focused on:
 
-## 5. Ablation Study: No-Blur
-
-*   Generated a new dataset **without motion blur** (no-blur) to test the blur hypothesis.
-*   Retrained with the same LOBO split.
-*   **Result**: Performance was **worse** than full noise (PSNR -0.3 dB).
-*   **Conclusion**: The blur component was actually useful/realistic; the problem **was not** the blur itself.
+- building usable pseudo-noisy datasets,
+- handling file-format and filename mismatches,
+- setting up consistent board-based splits,
+- testing whether synthetic supervision could support the denoising pipeline.
 
 ---
 
-## 6. Hybrid Dataset (70% Full + 30% No-Blur)
+## 3. Manifest building and LOBO-style organization
 
-*   To bridge the gap between training and validation, we created a **hybrid manifest**:
-    *   70% Full pseudo-noisy
-    *   30% No-blur
-*   **Training Results**:
-    *   Slight improvement over baseline: **PSNR +0.13 dB**, **SSIM +0.047**.
-    *   Status: Better, but still not satisfactory for a final solution.
+Training and validation manifests were organized with leave-one-board-out logic so that generator outputs could be integrated into denoising experiments under controlled splits.
+
+This phase was mainly operational: matching naming conventions, handling suffix differences, and ensuring pseudo-noisy outputs could be aligned with the denoising workflow.
 
 ---
 
-## 7. Log-Domain Training
+## 4. First denoising training attempts
 
-*   Implemented a DnCNN variant operating in the **log-domain** (mathematically appropriate for multiplicative speckle noise).
-*   **Training**: Showed very high numbers (50–60 dB) due to log scale.
-*   **Inference**: Correctly applied inverse transform (`exp`, not `expm1`) for evaluation.
-*   **Results**:
-    *   It was the **best of the three models**.
-    *   However, real validation gain remained small (**+0.03 dB**).
-*   **Conclusion**: Log-domain is the **correct direction**, but the **training data** (pseudo-real) was holding back performance.
+Early denoising runs using pseudo-noisy supervision produced limited gains on real data. The main observation was not a decisive success, but rather the appearance of a **domain gap** between synthetic supervision and real ESPI measurements.
+
+This was an important thesis result: pseudo-noisy generation was useful as an experimental tool, but realism and alignment mattered more than synthetic quantity alone.
 
 ---
 
-## 8. The Major Issue: Domain Gap
+## 5. Blur and hybrid-data ablations
 
-*   Evaluated on **Real Single** → **Real Averaged** pairs (not pseudo):
-    *   PSNR gain: **Negative** (e.g., -0.26 dB).
-    *   SSIM gain: Negative.
-    *   MPI: High.
-*   **Confirmation**: Training on synthetic noise and testing on real data causes a **PSNR gap** (consistent with literature).
-*   Tried fine-tuning on pseudo-real data, but results worsened (-0.4 dB to -0.8 dB), proving that fine-tuning on imperfect synthetic data degrades performance.
+Several ablation steps were explored, including:
 
----
+- removing motion blur,
+- mixing full pseudo-noisy and reduced-blur samples,
+- comparing different synthetic regimes under the same validation logic.
 
-## 9. The Breakthrough: "Pairfix" & Correct Alignment
-
-This was the turning point of the research.
-
-*   Instead of comparing "pseudo → pseudo-clean", we shifted to:
-    *   **Real Single-shot** inputs (e.g., `/data/wood_real_C/W03...`)
-    *   Matched with **Real Averaged** targets (e.g., `/data/wood_Averaged/W03...`)
-    *   **Crucial Steps**:
-        *   Exact matching by **Hz & dB**.
-        *   **Integer alignment** before metric calculation.
-        *   **Suffix stripping** for consistent filenames.
-*   **Results** with this "Pairfix" methodology:
-    *   **Mean ΔPSNR**: Increased from +0.028 dB → **+0.148 dB**.
-    *   After filtering 2 outliers: **+0.278 dB Mean** and **+0.306 dB Median**.
-    *   **Success Rate**: ~95.5%.
-    *   **MPI_norm**: ~0.09.
-*   **Conclusion**: This established the first **"production-ready"** setup.
+These experiments helped clarify that the problem was not a single augmentation component in isolation. Instead, the key issue was whether the synthetic regime matched the statistics of the real acquisition process closely enough.
 
 ---
 
-## 10. Long-Run Evaluation
+## 6. Log-domain direction
 
-*   Executed a large-scale evaluation (≈3000 images).
-*   **Results (1119/2989 processed)**:
-    *   Median ΔPSNR: ~ **+0.298 dB**
-    *   Mean ΔPSNR: ~ **+0.272 dB**
-    *   Success Rate: 95.5%
-    *   Outliers: 0.2%
-    *   Consistent behavior across all frequency bands.
-*   Documented in `MASTER_SUMMARY_REPORT.md`.
+A log-domain denoising direction was also investigated because it is more natural for multiplicative speckle-like corruption. This improved the conceptual correctness of the denoising setup, but it did not remove the main bottleneck by itself: the quality of the supervision regime still dominated the outcome.
 
 ---
 
-## 11. Calibration v2.0 (Global)
+## 7. Domain-gap confirmation
 
-*   Performed formal calibration using:
-    *   Single: `/data/wood_real_C/W03...`
-    *   Avg: `/data/wood_Averaged/W03...`
-*   **Initial Issues**:
-    *   R² ~0.69 (low)
-    *   Per-band gain (+0.19 dB) was below target.
-*   **Conclusion**: Using **working set parameters (k=3.0, peak=60, sigma=0.01)** proved more stable than automatic calibration when the fit is poor.
+Evaluation on real single-shot vs real averaged pairs confirmed that synthetic training could fail to transfer cleanly to the real regime. Fine-tuning on imperfect synthetic approximations did not automatically solve this problem and could even make results worse.
+
+This stage is important in the thesis narrative because it shows that pseudo-noisy generation is helpful only when used with careful calibration and with clear awareness of its limitations.
 
 ---
 
-## 12. Calibration v2.0 (Per-Board)
+## 8. Pair matching and alignment milestone
 
-*   Applied calibration to **W01** and **W02**:
-*   **W01**: Success → **+0.307 dB** median ΔPSNR, ΔSSIM ~0.0054, MPI_norm <0.1.
-*   **W02**: Failed with both specific and shared parameters → Documented as a **limitation / board-specific mismatch**.
+The development phase later introduced more careful matching and alignment between real single-shot inputs and their corresponding averaged references. Internal steps such as exact key matching, alignment correction, and suffix normalization were important milestones in improving evaluation reliability.
 
----
-
-## 13. Final Landscape
-
-Final results table:
-
-| Board | Method                  | ΔPSNR         | Status            |
-| :--- | :---------------------- | :------------ | :---------------- |
-| **W03** | Working params (global) | +0.078 dB     | Baseline, 100% OK |
-| **W01** | Calib v2.0 (per-band)   | **+0.307 dB** | ✅ Target Met      |
-| **W02** | Any method              | < 0           | Limitation        |
-
-**Thesis Narrative**:
-*   **W01**: Demonstrates that calibration works effectively.
-*   **W03**: Shows a stable baseline.
-*   **W02**: Serves as a documented limitation, adding credibility to the research by acknowledging negative results.
+These steps should be understood as **internal development milestones**, not as the sole final thesis conclusion by themselves. Their value was in making the denoising evaluation more trustworthy and in clarifying how much of the earlier instability came from pairing and alignment issues.
 
 ---
 
-## 14. Final Conclusion
+## 9. Calibration and board-specific behavior
 
-> When evaluating on mismatched or semi-synthetic pairs, DnCNN showed zero or negative improvement. However, by matching **real single-shot** images with their **corresponding averaged** references (using correct keys, alignment, and ROI) and utilizing a log-domain model, we achieved a consistent **+0.27…+0.31 dB** gain on one board (W01) and a small but positive baseline on another (W03). Performance on W02 remains a documented limitation due to calibration challenges.
+Subsequent calibration passes showed that the pseudo-noisy model behaved differently across boards. Some settings produced useful, stable gains on specific boards, while others exposed limitations and specimen-specific mismatch.
+
+This board-dependent behavior is scientifically important because it shows that calibration quality and specimen realism matter directly. The repository therefore supports the thesis as a calibrated pseudo-noisy generation component, not as a universally transferable synthetic-noise engine.
+
+---
+
+## 10. Thesis interpretation
+
+The final thesis interpretation is broader than any single internal milestone reported here:
+
+- pseudo-noisy generation is valuable when real denoising supervision is scarce,
+- calibration from real single-shot vs averaged references is necessary to reduce the synthetic-real gap,
+- internal steps such as pair matching, alignment correction, and board-specific calibration improved the development workflow,
+- but the strongest final denoising conclusions in the thesis depend on the later denoising repository and the curated downstream evaluation package, not on this repository alone.
+
+---
+
+## 11. Final note
+
+This repository should therefore be read as the **public pseudo-noisy generation component** of the thesis. It documents how physically calibrated synthetic supervision was constructed and refined, while preserving the development history that motivated the later denoising conclusions.

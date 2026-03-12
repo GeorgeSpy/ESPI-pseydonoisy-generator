@@ -19,7 +19,7 @@ Dependencies
 - Optional: scipy (distance transform, convolution), scikit-image (rank filters), opencv-python (fast conv), pandas (metrics CSV)
 The script degrades gracefully without optional deps.
 
-Author: ChatGPT (GPT-5 Thinking)
+Author: Georgios Spyridakis (thesis implementation note)
 Date: 2025-09-01
 """
 
