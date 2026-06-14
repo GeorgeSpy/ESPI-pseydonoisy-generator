@@ -67,3 +67,5 @@ logs/
 *.bak
 *.backup
 *~
+
+_validation_out/

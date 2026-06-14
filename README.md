@@ -113,3 +113,54 @@ If you use this repository, please cite the software metadata in `CITATION.cff`.
 ## License
 
 MIT License. See `LICENSE` for details.
+
+
+## Reproducibility layer (v3.2)
+
+In addition to the baseline generator, this repository ships the **v3.2
+execution layer** used for the methodology contribution of the thesis paper
+(deterministic replay, order invariance, and regime-aware calibration). v3.2
+preserves the frozen scientific baseline: with `--rng-mode legacy` it produces
+byte-identical output to v3.1.
+
+### Scripts
+
+- `make_pseudo_noisy_plus_v3_2.py` -- generator with provenance manifests,
+  per-image deterministic RNG, manifest-driven conditioning, and
+  global / by-regime / by-image calibration modes.
+- `make_pseudo_noisy_plus_v3_1.py` -- frozen v3.1 baseline (reference for the
+  backward-compatibility check).
+- `phase1..5_*_validation.py` -- the reproducibility validation harness.
+
+### Key options added in v3.2
+
+| Option | Purpose |
+|--------|---------|
+| `--rng-mode {legacy, per_image}` | per-image deterministic RNG (order-independent) |
+| `--conditioning-mode {global, manifest}` | per-image parameters from a manifest |
+| `--calibration-mode {global, by-regime, by-image}` | regime-aware calibration |
+| `--manifest`, `--write-manifest` | manifest-driven build + provenance output |
+| `--write-per-image-params` | per-image parameter ledger (CSV) |
+| `--blur-mode {linear, sqrt, piecewise}` | frequency->blur mapping |
+
+### Reproducibility evidence
+
+Running the chained validators (`phase1` -> `phase5`) confirms the three core
+properties reported in the paper. Phases 1-3 yield **30/30 byte-identical
+outputs with maximum deviation 0.0**:
+
+| Phase | Property | Verdict |
+|-------|----------|---------|
+| 1 | backward compatibility | v3.2 reproduces v3.1 exactly (global mode) |
+| 2 | order invariance | identical output regardless of file order |
+| 3 | replayability | runs reproduced from provenance manifests |
+
+See [`REPRODUCE.md`](REPRODUCE.md) for exact commands, frozen calibration
+values, and path configuration.
+
+### Scope
+
+This repository covers **pseudo-noisy generation** only. The fixed V4
+DnCNN-Lite-ECA probe and all probe-side results (validation loss, PSNR/SSIM/
+EdgeF1 tables) live in the companion repository
+[`ESPI-DnCNN-ECA`](https://github.com/GeorgeSpy/ESPI-DnCNN-ECA).
