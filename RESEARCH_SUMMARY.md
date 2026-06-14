@@ -1,6 +1,6 @@
-# Research Summary and Thesis Notes
+# Research Summary
 
-This document summarizes the internal development path of the ESPI pseudo-noisy generation pipeline. It is kept as a **development-history / thesis-notes** document, not as a stand-alone statement of the final thesis conclusion.
+This document summarizes the internal development path of the ESPI pseudo-noisy generation pipeline. It is kept as a **development-history / research-notes** document, not as a stand-alone statement of final manuscript conclusions.
 
 ---
 
@@ -42,7 +42,7 @@ This phase was mainly operational: matching naming conventions, handling suffix 
 
 Early denoising runs using pseudo-noisy supervision produced limited gains on real data. The main observation was not a decisive success, but rather the appearance of a **domain gap** between synthetic supervision and real ESPI measurements.
 
-This was an important thesis result: pseudo-noisy generation was useful as an experimental tool, but realism and alignment mattered more than synthetic quantity alone.
+This was an important research result: pseudo-noisy generation was useful as an experimental tool, but realism and alignment mattered more than synthetic quantity alone.
 
 ---
 
@@ -68,7 +68,7 @@ A log-domain denoising direction was also investigated because it is more natura
 
 Evaluation on real single-shot vs real averaged pairs confirmed that synthetic training could fail to transfer cleanly to the real regime. Fine-tuning on imperfect synthetic approximations did not automatically solve this problem and could even make results worse.
 
-This stage is important in the thesis narrative because it shows that pseudo-noisy generation is helpful only when used with careful calibration and with clear awareness of its limitations.
+This stage is important in the research narrative because it shows that pseudo-noisy generation is helpful only when used with careful calibration and with clear awareness of its limitations.
 
 ---
 
@@ -76,7 +76,7 @@ This stage is important in the thesis narrative because it shows that pseudo-noi
 
 The development phase later introduced more careful matching and alignment between real single-shot inputs and their corresponding averaged references. Internal steps such as exact key matching, alignment correction, and suffix normalization were important milestones in improving evaluation reliability.
 
-These steps should be understood as **internal development milestones**, not as the sole final thesis conclusion by themselves. Their value was in making the denoising evaluation more trustworthy and in clarifying how much of the earlier instability came from pairing and alignment issues.
+These steps should be understood as **internal development milestones**, not as final manuscript conclusions by themselves. Their value was in making the denoising evaluation more trustworthy and in clarifying how much of the earlier instability came from pairing and alignment issues.
 
 ---
 
@@ -84,21 +84,21 @@ These steps should be understood as **internal development milestones**, not as 
 
 Subsequent calibration passes showed that the pseudo-noisy model behaved differently across boards. Some settings produced useful, stable gains on specific boards, while others exposed limitations and specimen-specific mismatch.
 
-This board-dependent behavior is scientifically important because it shows that calibration quality and specimen realism matter directly. The repository therefore supports the thesis as a calibrated pseudo-noisy generation component, not as a universally transferable synthetic-noise engine.
+This board-dependent behavior is scientifically important because it shows that calibration quality and specimen realism matter directly. The repository therefore supports the research program as a calibrated pseudo-noisy generation component, not as a universally transferable synthetic-noise engine.
 
 ---
 
-## 10. Thesis interpretation
+## 10. Research interpretation
 
-The final thesis interpretation is broader than any single internal milestone reported here:
+The final research interpretation is broader than any single internal milestone reported here:
 
 - pseudo-noisy generation is valuable when real denoising supervision is scarce,
 - calibration from real single-shot vs averaged references is necessary to reduce the synthetic-real gap,
 - internal steps such as pair matching, alignment correction, and board-specific calibration improved the development workflow,
-- but the strongest final denoising conclusions in the thesis depend on the later denoising repository and the curated downstream evaluation package, not on this repository alone.
+- but the strongest denoising conclusions depend on the companion denoising repository and the curated downstream evaluation package, not on this repository alone.
 
 ---
 
 ## 11. Final note
 
-This repository should therefore be read as the **public pseudo-noisy generation component** of the thesis. It documents how physically calibrated synthetic supervision was constructed and refined, while preserving the development history that motivated the later denoising conclusions.
+This repository should therefore be read as a **public pseudo-noisy generation component for ESPI denoising research**. It documents how physically calibrated synthetic supervision was constructed and refined, while preserving the development history that motivated the later denoising conclusions.

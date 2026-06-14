@@ -1,12 +1,12 @@
 # ESPI-PseudoNoisy: Physically Calibrated Pseudo-Noisy Generation for ESPI
 
-This repository contains the physically calibrated pseudo-noisy generator used in the thesis to support ESPI denoising experiments under data scarcity. Its role in the broader workflow is to generate synthetic supervision that is closer to the real single-shot acquisition regime, helping reduce the synthetic-real gap during denoising training.
+This repository contains a physically calibrated pseudo-noisy generator for ESPI denoising research under limited real paired supervision. Its role is to generate controlled synthetic supervision that is closer to the real single-shot acquisition regime, supporting synthetic-real gap analysis and severity-controlled denoising experiments.
 
-The repository should be understood as the **public pseudo-noisy generation component** of the thesis, not as a standalone end-to-end solution for denoising or classification.
+The repository should be understood as a **research software component for calibrated ESPI synthetic supervision**, not as a standalone end-to-end solution for denoising or classification.
 
-## Thesis positioning
+## Research positioning
 
-Within the full thesis workflow, this repository supports the denoising stage by providing a calibrated synthetic-noise model when matched real training pairs are limited or incomplete.
+Within the broader ESPI research workflow, this repository supports denoising studies by providing a calibrated synthetic-corruption model when matched real noisy/clean training pairs are limited or incomplete.
 
 Its purpose is to:
 
@@ -15,7 +15,7 @@ Its purpose is to:
 - study how synthetic supervision behaves relative to real-aligned supervision,
 - document the calibration and development history behind the pseudo-noisy generation process.
 
-It should **not** be interpreted as a general-purpose augmentation toolkit, and it should **not** be read as implying that this repository alone delivers the final downstream classification performance reported in the thesis.
+It should **not** be interpreted as a general-purpose augmentation toolkit, and it should **not** be read as implying that this repository alone establishes downstream denoising or classification performance.
 
 ## Core modeling idea
 
@@ -36,7 +36,7 @@ On top of this baseline cascade, the repository includes calibration and realism
 ## Main scripts
 
 - `make_pseudo_noisy_plus.py`
-  Main calibrated generator with the full thesis-oriented noise cascade and calibration options.
+  Main calibrated generator with the full research-oriented noise cascade and calibration options.
 
 - `make_pseudo_noisy_matched.py`
   Utility for generating matched clean/noisy pairs for denoising workflows.
@@ -66,18 +66,18 @@ python make_pseudo_noisy_plus.py \
     --amplitude 0.5
 ```
 
-## Thesis-aligned interpretation
+## Research interpretation
 
-The thesis conclusion is **regime-dependent**, not generator-only:
+The scientific interpretation is **regime-dependent**, not generator-only:
 
 - physically calibrated pseudo-noisy supervision is useful when real denoising supervision is scarce,
 - reducing the synthetic-real gap matters more than simply increasing synthetic quantity,
 - downstream benefit depends on how closely the generated supervision matches the real acquisition regime,
-- the final thesis conclusions about denoising and downstream classification must be interpreted together with the separate denoising and classification repositories.
+- denoising and downstream classification conclusions must be interpreted together with the separate denoising and classification repositories.
 
 ## Repository contents
 
-This repository currently contains the public generator scripts and thesis-supporting notes in the repository root:
+This repository currently contains the public generator scripts and research-supporting notes in the repository root:
 
 - `README.md`
 - `RESEARCH_SUMMARY.md`
@@ -91,7 +91,7 @@ This repository currently contains the public generator scripts and thesis-suppo
 
 ## Related repositories
 
-The thesis codebase is split across three public code components:
+The broader ESPI research codebase is split across three public code components:
 
 - **Pseudo-noisy generation (this repository)** (`https://github.com/GeorgeSpy/ESPI-pseydonoisy-generator`)
 - **DnCNN-ECA denoising** (`https://github.com/GeorgeSpy/ESPI-DnCNN-ECA`)
@@ -118,7 +118,7 @@ MIT License. See `LICENSE` for details.
 ## Reproducibility layer (v3.2)
 
 In addition to the baseline generator, this repository ships the **v3.2
-execution layer** used for the methodology contribution of the thesis paper
+execution layer** used for the methodology contribution of the associated research paper
 (deterministic replay, order invariance, and regime-aware calibration). v3.2
 preserves the frozen scientific baseline: with `--rng-mode legacy` it produces
 byte-identical output to v3.1.
