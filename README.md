@@ -91,18 +91,21 @@ The scientific interpretation is **regime-dependent**, not generator-only:
 
 ## Repository contents
 
-This repository currently contains the public generator scripts and research-supporting notes in the repository root:
+This repository currently contains:
 
-- `README.md`
-- `RESEARCH_SUMMARY.md`
-- `DEVELOPMENT_LOG.md`
-- `make_pseudo_noisy_plus.py`
-- `make_pseudo_noisy_matched.py`
-- `generate_pseudo_noisy.py`
-- `make_pseudo_noisy_v3.py`
-- `requirements.txt`
-- `CITATION.cff`
-- `examples/`
+- generator scripts:
+  `make_pseudo_noisy_plus_v3_2.py`, `make_pseudo_noisy_plus_v3_1.py`,
+  `make_pseudo_noisy_plus.py`, `make_pseudo_noisy_matched.py`,
+  `generate_pseudo_noisy.py`, and `make_pseudo_noisy_v3.py`;
+- reproducibility validators:
+  `phase1_backward_compat_validation.py` through
+  `phase5_utility_validation.py`, plus `run_all_phases.bat`;
+- documentation:
+  `README.md`, `REPRODUCE.md`, `RESEARCH_SUMMARY.md`, and
+  `DEVELOPMENT_LOG.md`;
+- minimal reproducible examples under `examples/`;
+- packaging metadata:
+  `requirements.txt`, `CITATION.cff`, and `LICENSE`.
 
 ## Related repositories
 
