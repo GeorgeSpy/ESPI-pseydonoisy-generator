@@ -58,14 +58,25 @@ pip install -r requirements.txt
 ### Example usage
 
 ```bash
-python make_pseudo_noisy_plus.py \
-    --input /path/to/clean/images \
-    --output /path/to/output \
-    --material wood \
-    --freq-hz 180 \
-    --amp-db 90.0 \
-    --seed 42
+python make_pseudo_noisy_plus_v3_2.py \
+  --input examples/clean \
+  --output examples/pseudo_noisy \
+  --seed 42 \
+  --speckle-k 1.89 \
+  --poisson-peak 12.5 \
+  --gauss-sigma 0.0919 \
+  --match meanstd \
+  --rng-mode per_image \
+  --out-bitdepth 8 \
+  --out-format png \
+  --export-metrics examples/metrics_example.csv \
+  --export-summary examples/summary_example.json \
+  --write-per-image-params examples/per_image_params_example.csv
 ```
+
+This is the exact command used to generate the committed examples under
+`examples/`. The legacy `make_pseudo_noisy_plus.py` script remains available for
+the pre-v3 baseline CLI.
 
 ## Research interpretation
 

@@ -69,3 +69,8 @@ logs/
 *~
 
 _validation_out/
+
+# Auto-generated when rerunning the committed examples
+examples/pseudo_noisy/run_manifest_*.json
+examples/pseudo_noisy/calibration_summary.json
+examples/pseudo_noisy/calibration_pairs.csv
