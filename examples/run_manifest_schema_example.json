@@ -1,0 +1,30 @@
+{
+  "generator_version": "v3.2",
+  "completed": true,
+  "exact_cli": [
+    "make_pseudo_noisy_plus_v3_2.py",
+    "--input", "examples/clean",
+    "--output", "examples/pseudo_noisy",
+    "--seed", "42",
+    "--speckle-k", "1.89",
+    "--poisson-peak", "12.5",
+    "--gauss-sigma", "0.0919",
+    "--match", "meanstd",
+    "--rng-mode", "per_image"
+  ],
+  "seed": 42,
+  "conditioning_mode": "global",
+  "rng_mode": "per_image",
+  "calibration_mode": "global",
+  "calibration_applied": false,
+  "source_root": "examples/clean",
+  "output_root": "examples/pseudo_noisy",
+  "source_file_count": 3,
+  "output_file_count": 3,
+  "exports": {
+    "per_image_params": "examples/per_image_params_example.csv",
+    "metrics_csv": "examples/metrics_example.csv",
+    "summary_json": "examples/summary_example.json"
+  },
+  "note": "Sanitized schema example. Auto-generated manifests may include host-specific absolute paths and are intentionally not committed."
+}

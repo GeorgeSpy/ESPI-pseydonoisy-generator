@@ -1,12 +1,12 @@
 # ESPI-PseudoNoisy: Physically Calibrated Pseudo-Noisy Generation for ESPI
 
-This repository contains the physically calibrated pseudo-noisy generator used in the thesis to support ESPI denoising experiments under data scarcity. Its role in the broader workflow is to generate synthetic supervision that is closer to the real single-shot acquisition regime, helping reduce the synthetic-real gap during denoising training.
+This repository contains a physically calibrated pseudo-noisy generator for ESPI denoising research under limited real paired supervision. Its role is to generate controlled synthetic supervision that is closer to the real single-shot acquisition regime, supporting synthetic-real gap analysis and severity-controlled denoising experiments.
 
-The repository should be understood as the **public pseudo-noisy generation component** of the thesis, not as a standalone end-to-end solution for denoising or classification.
+The repository should be understood as a **research software component for calibrated ESPI synthetic supervision**, not as a standalone end-to-end solution for denoising or classification.
 
-## Thesis positioning
+## Research positioning
 
-Within the full thesis workflow, this repository supports the denoising stage by providing a calibrated synthetic-noise model when matched real training pairs are limited or incomplete.
+Within the broader ESPI research workflow, this repository supports denoising studies by providing a calibrated synthetic-corruption model when matched real noisy/clean training pairs are limited or incomplete.
 
 Its purpose is to:
 
@@ -15,7 +15,7 @@ Its purpose is to:
 - study how synthetic supervision behaves relative to real-aligned supervision,
 - document the calibration and development history behind the pseudo-noisy generation process.
 
-It should **not** be interpreted as a general-purpose augmentation toolkit, and it should **not** be read as implying that this repository alone delivers the final downstream classification performance reported in the thesis.
+It should **not** be interpreted as a general-purpose augmentation toolkit, and it should **not** be read as implying that this repository alone establishes downstream denoising or classification performance.
 
 ## Core modeling idea
 
@@ -35,17 +35,19 @@ On top of this baseline cascade, the repository includes calibration and realism
 
 ## Main scripts
 
-- `make_pseudo_noisy_plus.py`
-  Main calibrated generator with the full thesis-oriented noise cascade and calibration options.
+| Script | Status | Use |
+|---|---|---|
+| `make_pseudo_noisy_plus_v3_2.py` | Current reproducibility layer | Use for deterministic per-image RNG, provenance manifests, manifest-driven conditioning, and global / by-regime / by-image calibration modes. |
+| `make_pseudo_noisy_plus_v3_1.py` | Frozen compatibility baseline | Reference generator for backward-compatibility validation against v3.2 legacy mode. |
+| `make_pseudo_noisy_plus.py` | Pre-v3 baseline | Earlier calibrated generator retained for historical compatibility and simple generation. |
+| `make_pseudo_noisy_matched.py` | Legacy utility | Matched clean/noisy pair helper retained for older denoising workflows. |
+| `generate_pseudo_noisy.py` | Legacy wrapper | Lightweight batch-style wrapper retained for historical development context. |
+| `make_pseudo_noisy_v3.py` | Legacy variant | Earlier simplified generator retained for development history. |
 
-- `make_pseudo_noisy_matched.py`
-  Utility for generating matched clean/noisy pairs for denoising workflows.
-
-- `generate_pseudo_noisy.py`
-  Lightweight batch-style wrapper for pseudo-noisy generation.
-
-- `make_pseudo_noisy_v3.py`
-  Earlier generator variant retained for historical development context.
+`make_pseudo_noisy_plus_v3_1.py` is not a separate published calibration stage
+and should not introduce another parameter set. It is retained only as the
+frozen generator baseline used to verify that v3.2 preserves the legacy/global
+path byte-for-byte.
 
 ## Quick start
 
@@ -58,40 +60,53 @@ pip install -r requirements.txt
 ### Example usage
 
 ```bash
-python make_pseudo_noisy_plus.py \
-    --clean-dir /path/to/clean/images \
-    --out-dir /path/to/output \
-    --material wood \
-    --frequency 180 \
-    --amplitude 0.5
+python make_pseudo_noisy_plus_v3_2.py \
+  --input examples/clean \
+  --output examples/pseudo_noisy \
+  --seed 42 \
+  --speckle-k 1.89 \
+  --poisson-peak 12.5 \
+  --gauss-sigma 0.0919 \
+  --match meanstd \
+  --rng-mode per_image \
+  --out-bitdepth 8 \
+  --out-format png \
+  --export-metrics examples/metrics_example.csv \
+  --export-summary examples/summary_example.json \
+  --write-per-image-params examples/per_image_params_example.csv
 ```
 
-## Thesis-aligned interpretation
+This is the exact command used to generate the committed examples under
+`examples/`. The legacy `make_pseudo_noisy_plus.py` script remains available for
+the pre-v3 baseline CLI.
 
-The thesis conclusion is **regime-dependent**, not generator-only:
+## Research interpretation
+
+The scientific interpretation is **regime-dependent**, not generator-only:
 
 - physically calibrated pseudo-noisy supervision is useful when real denoising supervision is scarce,
 - reducing the synthetic-real gap matters more than simply increasing synthetic quantity,
 - downstream benefit depends on how closely the generated supervision matches the real acquisition regime,
-- the final thesis conclusions about denoising and downstream classification must be interpreted together with the separate denoising and classification repositories.
+- denoising and downstream classification conclusions must be interpreted together with the separate denoising and classification repositories.
 
 ## Repository contents
 
-This repository currently contains the public generator scripts and thesis-supporting notes in the repository root:
+This repository currently contains the public generator scripts and research-supporting notes in the repository root:
 
 - `README.md`
 - `RESEARCH_SUMMARY.md`
-- `COMPREHENSIVE_ESPI_PSEUDONOISY_DATA.md`
+- `DEVELOPMENT_LOG.md`
 - `make_pseudo_noisy_plus.py`
 - `make_pseudo_noisy_matched.py`
 - `generate_pseudo_noisy.py`
 - `make_pseudo_noisy_v3.py`
 - `requirements.txt`
 - `CITATION.cff`
+- `examples/`
 
 ## Related repositories
 
-The thesis codebase is split across three public code components:
+The broader ESPI research codebase is split across three public code components:
 
 - **Pseudo-noisy generation (this repository)** (`https://github.com/GeorgeSpy/ESPI-pseydonoisy-generator`)
 - **DnCNN-ECA denoising** (`https://github.com/GeorgeSpy/ESPI-DnCNN-ECA`)
@@ -113,3 +128,57 @@ If you use this repository, please cite the software metadata in `CITATION.cff`.
 ## License
 
 MIT License. See `LICENSE` for details.
+
+
+## Reproducibility layer (v3.2)
+
+In addition to the baseline generator, this repository ships the **v3.2
+execution layer** used for the methodology contribution of the associated research paper
+(deterministic replay, order invariance, and regime-aware calibration). v3.2
+preserves the frozen scientific baseline: with `--rng-mode legacy` it produces
+byte-identical output to v3.1.
+
+### Scripts
+
+- `make_pseudo_noisy_plus_v3_2.py` -- generator with provenance manifests,
+  per-image deterministic RNG, manifest-driven conditioning, and
+  global / by-regime / by-image calibration modes.
+- `make_pseudo_noisy_plus_v3_1.py` -- frozen v3.1 baseline (reference for the
+  backward-compatibility check).
+- `phase1..5_*_validation.py` -- the reproducibility validation harness.
+
+The v3.1 file is a compatibility reference, not a separate calibration result.
+The paper-level calibration values are documented in `REPRODUCE.md`.
+
+### Key options added in v3.2
+
+| Option | Purpose |
+|--------|---------|
+| `--rng-mode {legacy, per_image}` | per-image deterministic RNG (order-independent) |
+| `--conditioning-mode {global, manifest}` | per-image parameters from a manifest |
+| `--calibration-mode {global, by-regime, by-image}` | regime-aware calibration |
+| `--manifest`, `--write-manifest` | manifest-driven build + provenance output |
+| `--write-per-image-params` | per-image parameter ledger (CSV) |
+| `--blur-mode {linear, sqrt, piecewise}` | frequency->blur mapping |
+
+### Reproducibility evidence
+
+Running the chained validators (`phase1` -> `phase5`) confirms the three core
+properties reported in the paper. Phases 1-3 yield **30/30 byte-identical
+outputs with maximum deviation 0.0**:
+
+| Phase | Property | Verdict |
+|-------|----------|---------|
+| 1 | backward compatibility | v3.2 reproduces v3.1 exactly (global mode) |
+| 2 | order invariance | identical output regardless of file order |
+| 3 | replayability | runs reproduced from provenance manifests |
+
+See [`REPRODUCE.md`](REPRODUCE.md) for exact commands, frozen calibration
+values, and path configuration.
+
+### Scope
+
+This repository covers **pseudo-noisy generation** only. The fixed V4
+DnCNN-Lite-ECA probe and all probe-side results (validation loss, PSNR/SSIM/
+EdgeF1 tables) live in the companion repository
+[`ESPI-DnCNN-ECA`](https://github.com/GeorgeSpy/ESPI-DnCNN-ECA).
