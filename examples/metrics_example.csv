@@ -1,0 +1,4 @@
+source,file,mode,match,psnr,ssim,mpi,pcs,edgef1,speckle_k,poisson_peak,gauss_sigma
+examples\clean\0040Hz_91.0db.png,examples\pseudo_noisy\0040Hz_91.png,full,meanstd,19.198636,0.217393,141.445339,-0.050385,0.256624,1.890000,12.500000,0.091900
+examples\clean\0045Hz_90.0db.png,examples\pseudo_noisy\0045Hz_90.png,full,meanstd,18.991295,0.252849,163.820518,-0.059808,0.387308,1.890000,12.500000,0.091900
+examples\clean\0050Hz_90.0db.png,examples\pseudo_noisy\0050Hz_90.png,full,meanstd,19.182084,0.245382,157.116009,-0.056772,0.363373,1.890000,12.500000,0.091900

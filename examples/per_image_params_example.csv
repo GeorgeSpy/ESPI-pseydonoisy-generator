@@ -1,0 +1,4 @@
+image_id,source_path,output_path,mode,frame_idx,conditioning_mode,rng_mode,rng_subseed,freq_hz,amp_db,blur_length_px,speckle_k,poisson_peak,gauss_sigma,match,roi_mask_path,regime,group,psnr,ssim,mpi,pcs,edgef1
+0040Hz_91.0db.png,0040Hz_91.0db.png,0040Hz_91.png,full,0,global,per_image,4739578516163686788,,,,1.89,12.5,0.0919,meanstd,,global,,19.198636,0.217393,141.445339,-0.050385,0.256624
+0045Hz_90.0db.png,0045Hz_90.0db.png,0045Hz_90.png,full,0,global,per_image,3993377967775133557,,,,1.89,12.5,0.0919,meanstd,,global,,18.991295,0.252849,163.820518,-0.059808,0.387308
+0050Hz_90.0db.png,0050Hz_90.0db.png,0050Hz_90.png,full,0,global,per_image,5858138259944284251,,,,1.89,12.5,0.0919,meanstd,,global,,19.182084,0.245382,157.116009,-0.056772,0.363373

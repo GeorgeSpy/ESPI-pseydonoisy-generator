@@ -59,11 +59,12 @@ pip install -r requirements.txt
 
 ```bash
 python make_pseudo_noisy_plus.py \
-    --clean-dir /path/to/clean/images \
-    --out-dir /path/to/output \
+    --input /path/to/clean/images \
+    --output /path/to/output \
     --material wood \
-    --frequency 180 \
-    --amplitude 0.5
+    --freq-hz 180 \
+    --amp-db 90.0 \
+    --seed 42
 ```
 
 ## Research interpretation
@@ -81,13 +82,14 @@ This repository currently contains the public generator scripts and research-sup
 
 - `README.md`
 - `RESEARCH_SUMMARY.md`
-- `COMPREHENSIVE_ESPI_PSEUDONOISY_DATA.md`
+- `DEVELOPMENT_LOG.md`
 - `make_pseudo_noisy_plus.py`
 - `make_pseudo_noisy_matched.py`
 - `generate_pseudo_noisy.py`
 - `make_pseudo_noisy_v3.py`
 - `requirements.txt`
 - `CITATION.cff`
+- `examples/`
 
 ## Related repositories
 
