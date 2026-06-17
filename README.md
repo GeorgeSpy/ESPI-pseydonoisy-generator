@@ -44,6 +44,11 @@ On top of this baseline cascade, the repository includes calibration and realism
 | `generate_pseudo_noisy.py` | Legacy wrapper | Lightweight batch-style wrapper retained for historical development context. |
 | `make_pseudo_noisy_v3.py` | Legacy variant | Earlier simplified generator retained for development history. |
 
+`make_pseudo_noisy_plus_v3_1.py` is not a separate published calibration stage
+and should not introduce another parameter set. It is retained only as the
+frozen generator baseline used to verify that v3.2 preserves the legacy/global
+path byte-for-byte.
+
 ## Quick start
 
 ### Installation
@@ -141,6 +146,9 @@ byte-identical output to v3.1.
 - `make_pseudo_noisy_plus_v3_1.py` -- frozen v3.1 baseline (reference for the
   backward-compatibility check).
 - `phase1..5_*_validation.py` -- the reproducibility validation harness.
+
+The v3.1 file is a compatibility reference, not a separate calibration result.
+The paper-level calibration values are documented in `REPRODUCE.md`.
 
 ### Key options added in v3.2
 

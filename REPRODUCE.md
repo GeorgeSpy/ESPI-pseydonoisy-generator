@@ -33,6 +33,10 @@ pip install -r requirements.txt        # numpy, Pillow (required); scipy/opencv 
 | `phase4_calibration_validation.py` | global / by-regime / by-image calibration modes |
 | `phase5_utility_validation.py` | Probe-side utility (needs external V4 checkpoint + torch) |
 
+`make_pseudo_noisy_plus_v3_1.py` is a frozen compatibility reference only. It
+does not define a separate published calibration block; the calibration values
+below are the authoritative parameter sets for the paper-level v3.2 layer.
+
 ## 3. Path configuration (portable)
 
 The validators no longer use hard-coded `C:\` / `D:\` paths. They resolve all
