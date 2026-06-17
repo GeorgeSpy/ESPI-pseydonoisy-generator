@@ -35,17 +35,14 @@ On top of this baseline cascade, the repository includes calibration and realism
 
 ## Main scripts
 
-- `make_pseudo_noisy_plus.py`
-  Main calibrated generator with the full research-oriented noise cascade and calibration options.
-
-- `make_pseudo_noisy_matched.py`
-  Utility for generating matched clean/noisy pairs for denoising workflows.
-
-- `generate_pseudo_noisy.py`
-  Lightweight batch-style wrapper for pseudo-noisy generation.
-
-- `make_pseudo_noisy_v3.py`
-  Earlier generator variant retained for historical development context.
+| Script | Status | Use |
+|---|---|---|
+| `make_pseudo_noisy_plus_v3_2.py` | Current reproducibility layer | Use for deterministic per-image RNG, provenance manifests, manifest-driven conditioning, and global / by-regime / by-image calibration modes. |
+| `make_pseudo_noisy_plus_v3_1.py` | Frozen compatibility baseline | Reference generator for backward-compatibility validation against v3.2 legacy mode. |
+| `make_pseudo_noisy_plus.py` | Pre-v3 baseline | Earlier calibrated generator retained for historical compatibility and simple generation. |
+| `make_pseudo_noisy_matched.py` | Legacy utility | Matched clean/noisy pair helper retained for older denoising workflows. |
+| `generate_pseudo_noisy.py` | Legacy wrapper | Lightweight batch-style wrapper retained for historical development context. |
+| `make_pseudo_noisy_v3.py` | Legacy variant | Earlier simplified generator retained for development history. |
 
 ## Quick start
 

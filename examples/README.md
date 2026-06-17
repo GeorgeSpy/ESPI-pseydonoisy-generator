@@ -10,6 +10,7 @@ reproducible pseudo-noisy outputs generated with the v3.2 execution layer.
 - `metrics_example.csv`: per-image PSNR / SSIM / structure-proxy metrics.
 - `summary_example.json`: aggregate metrics over the three example images.
 - `per_image_params_example.csv`: per-image resolved parameters and RNG subseeds.
+- `run_manifest_schema_example.json`: sanitized provenance-manifest schema without host-specific absolute paths.
 
 ## Exact command
 
@@ -50,4 +51,3 @@ The historical `mpi` column is an edge/fringe-distance proxy. Lower distance is
 better; it is not a conventional score where larger is necessarily better. The
 historical `pcs` column is a gradient-smoothness proxy, not a full optical phase
 coherence measure.
-
