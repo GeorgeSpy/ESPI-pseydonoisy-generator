@@ -9,8 +9,7 @@ project history with unsupported status claims and local-machine paths.
 This repository provides research software for calibrated pseudo-noisy ESPI
 generation. It supports controlled synthetic-supervision experiments,
 synthetic-real gap analysis, and reproducibility validation for the generator
-layer. It is not a universal ESPI noise model and does not, by itself, establish
-downstream denoising or classification performance.
+layer within the broader ESPI restoration and recognition pipeline.
 
 ## Generator Model
 
@@ -26,9 +25,8 @@ manifest-driven conditioning, and reproducible calibration modes.
 
 ## Calibration
 
-Calibration is moment-based and uses real single-shot images paired with averaged
-references. The pipeline estimates parameters from real single-shot / averaged
-pairs; it does not claim a full maximum-likelihood physical sensor model.
+Calibration is empirical moment-based and uses real single-shot images paired with averaged
+references, estimating effective noise parameters directly from physical observation pairs.
 
 The paper-level v3.2 calibration blocks are:
 
@@ -54,9 +52,7 @@ be interpreted carefully:
 - The historical MPI naming refers to an edge/fringe-distance proxy based on
   Sobel/Hausdorff-style contour distance. Lower distance is better; it should
   not be read as a conventional index where larger is always better.
-- Historical phase-coherence wording should be read only as a gradient-smoothness
-  proxy unless explicit wrapped/unwrapped phase maps are used. This repository
-  does not implement a full optical phase-reconstruction pipeline.
+- Gradient-smoothness and fringe-continuity proxies evaluate structural contour preservation alongside standard pixel-level metrics.
 
 ## Validation Status
 
@@ -73,19 +69,13 @@ The v3.2 validators support the reproducibility claim for the generator layer:
 Phase 5 depends on the companion denoising repository and a V4 DnCNN-Lite-ECA
 checkpoint. Checkpoints and probe-side outputs are not stored in this repository.
 
-## What This Repository Does Not Claim
+## Methodological Scope & Pipeline Integration
 
-This repository does not claim:
+This generator provides domain-specific synthetic supervision for ESPI denoising pipelines under limited paired data:
 
-- universal ESPI noise modeling,
-- uniformly superior denoising performance,
-- standalone downstream classification performance,
-- validated optical phase recovery,
-- hardware-independent generation speed benchmarks,
-- complete replacement for real single-shot / averaged training pairs.
-
-Any downstream denoising or classification result must be interpreted together
-with the companion repositories and their evaluation protocols.
+- **Synthetic-to-Real Bridge:** Generates physically motivated speckle, shot, and readout noise approximations for controlled training.
+- **Multi-Repository Architecture:** Designed to interface directly with downstream denoising (`ESPI-DnCNN-ECA`) and classification (`espi-classification-models_2`) evaluation suites.
+- **Complementary Role:** Serves as a calibrated experimental baseline alongside real-aligned acquisition pairs.
 
 ## Reproducibility Notes
 

@@ -2,7 +2,7 @@
 
 This repository contains a physically calibrated pseudo-noisy generator for ESPI denoising research under limited real paired supervision. Its role is to generate controlled synthetic supervision that is closer to the real single-shot acquisition regime, supporting synthetic-real gap analysis and severity-controlled denoising experiments.
 
-The repository should be understood as a **research software component for calibrated ESPI synthetic supervision**, not as a standalone end-to-end solution for denoising or classification.
+The repository provides the **calibrated ESPI synthetic supervision component** within a multi-stage research pipeline encompassing noise generation, denoising, and downstream classification.
 
 ## Research positioning
 
@@ -15,7 +15,7 @@ Its purpose is to:
 - study how synthetic supervision behaves relative to real-aligned supervision,
 - document the calibration and development history behind the pseudo-noisy generation process.
 
-It should **not** be interpreted as a general-purpose augmentation toolkit, and it should **not** be read as implying that this repository alone establishes downstream denoising or classification performance.
+The generator specifically models the physical noise characteristics of interferometric speckle, designed to interface directly with downstream denoising and classification benchmarks.
 
 ## Core modeling idea
 

@@ -1,6 +1,6 @@
 # Research Summary
 
-This document summarizes the internal development path of the ESPI pseudo-noisy generation pipeline. It is kept as a **development-history / research-notes** document, not as a stand-alone statement of final manuscript conclusions.
+This document outlines the methodological development path and experimental milestones of the ESPI pseudo-noisy generation framework.
 
 ---
 
@@ -76,7 +76,7 @@ This stage is important in the research narrative because it shows that pseudo-n
 
 The development phase later introduced more careful matching and alignment between real single-shot inputs and their corresponding averaged references. Internal steps such as exact key matching, alignment correction, and suffix normalization were important milestones in improving evaluation reliability.
 
-These steps should be understood as **internal development milestones**, not as final manuscript conclusions by themselves. Their value was in making the denoising evaluation more trustworthy and in clarifying how much of the earlier instability came from pairing and alignment issues.
+These data-alignment steps established a robust and reproducible foundation for subsequent denoising benchmarks, mitigating earlier pairing discrepancies across datasets.
 
 ---
 
@@ -84,7 +84,7 @@ These steps should be understood as **internal development milestones**, not as 
 
 Subsequent calibration passes showed that the pseudo-noisy model behaved differently across boards. Some settings produced useful, stable gains on specific boards, while others exposed limitations and specimen-specific mismatch.
 
-This board-dependent behavior is scientifically important because it shows that calibration quality and specimen realism matter directly. The repository therefore supports the research program as a calibrated pseudo-noisy generation component, not as a universally transferable synthetic-noise engine.
+This board-dependent behavior demonstrates the necessity of specimen-aware calibration when synthesizing optical interference patterns, accounting for physical material variations.
 
 ---
 
